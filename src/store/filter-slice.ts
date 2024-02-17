@@ -5,6 +5,7 @@ import { IColors } from '../interfaces/IColors';
 import { IPrices } from '../interfaces/IPrices';
 import { IProduct } from '../interfaces/IProduct';
 import { IFilterState } from '../interfaces/IFilterState';
+import { FilterType } from '../enums/FilterType';
 
 
 const initialState: IFilterState = {
@@ -40,22 +41,35 @@ const filterSlice = createSlice({
       state.prices = action.payload
     },
 
-    setChecked: (state, action: PayloadAction<{ type: string; index: number }>) => {
+    setChecked: (state, action: PayloadAction<{ type: FilterType; index: number }>) => {
       const { type, index } = action.payload;
 
-      if (type === 'color') {
+      const setColorChecked =()=>{
         state.colors[index].checked = !state.colors[index].checked;
-      } else if (type === 'category') {
+      }
+
+      const setCategoryChecked =()=>{
         state.categories[index].checked = !state.categories[index].checked;
-      } else if(type === 'price'){
-        state.prices.forEach((price,priceIndex)=>{
-          if(priceIndex===index){
-            state.prices[index].checked=true;
-          }
-          else{
-            state.prices[priceIndex].checked=false;
-          }
-        })
+      }
+
+      const setPriceChecked =()=>{
+        state.prices.forEach((_,priceIndex)=>{
+          state.prices[priceIndex].checked = index==priceIndex;
+        });
+      }
+
+      switch(type){
+        case FilterType.COLOR:
+          setColorChecked();
+          break;
+        case FilterType.CATEGORY:
+          setCategoryChecked();
+          break;
+        case FilterType.PRICE:
+          setPriceChecked();
+          break;
+        default:
+          break;
       }
 
       const searchQuery = state.searchText.toLowerCase();

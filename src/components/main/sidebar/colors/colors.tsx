@@ -2,13 +2,14 @@ import React from "react";
 import { useAppDispatch, useAppSelector } from "../../../../hooks/hooks";
 import { setChecked } from "../../../../store/filter-slice";
 import { RootState } from "../../../../store/store";
+import { FilterType } from "../../../../enums/FilterType";
 
 const Colors: React.FC = () => {
   const colors = useAppSelector((state: RootState) => state.colors);
   const dispatch = useAppDispatch();
 
   const handleChange = (index: number) => {
-    dispatch(setChecked({ type: 'color', index }));
+    dispatch(setChecked({ type: FilterType.COLOR, index }));
   };
   
   return (

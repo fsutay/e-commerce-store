@@ -1,3 +1,4 @@
+import { FilterType } from '../../../../enums/FilterType';
 import { useAppDispatch, useAppSelector } from '../../../../hooks/hooks';
 import { setChecked } from '../../../../store/filter-slice';
 import { RootState } from '../../../../store/store';
@@ -7,7 +8,7 @@ const Prices = () => {
   const dispatch = useAppDispatch();
 
   const handleChange = (index: number) => {
-    dispatch(setChecked({ type: 'price', index }));
+    dispatch(setChecked({ type: FilterType.PRICE, index }));
   };
 
   return (

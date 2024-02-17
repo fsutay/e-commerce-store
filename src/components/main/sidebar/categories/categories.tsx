@@ -2,13 +2,14 @@ import React from "react";
 import { useAppDispatch, useAppSelector } from "../../../../hooks/hooks";
 import { RootState } from "../../../../store/store";
 import { setChecked } from "../../../../store/filter-slice";
+import { FilterType } from "../../../../enums/FilterType";
 
 const Categories: React.FC = () => {
   const categories = useAppSelector((state: RootState) => state.categories);
 const dispatch=useAppDispatch()
 
     const handleChange = (index: number) => {
-      dispatch(setChecked({ type: 'category', index }));
+      dispatch(setChecked({ type: FilterType.CATEGORY, index }));
     };
     
   return (
