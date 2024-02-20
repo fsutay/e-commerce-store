@@ -11,27 +11,22 @@ const NavigationBar = () => {
     const dispatch = useAppDispatch()
 
     const searchText = useSelector((state: RootState) => state.searchText)
-    console.log(searchText)
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         dispatch(filteredProducts(e.target.value))
     }
 
     return (
         <nav className='flex items-center justify-around py-5 border-b-2'>
-            <div className='text-2xl'>
-                <span><MdOutlineShoppingCart /></span>
-            </div>
-            <div>
-                <div className="nav-container">
+            <div></div>
+            <div className="nav-container md:w-3/6 ">
                     <input
-                        className="outline-none border py-1 px-5 rounded-md md:w-96 "
+                        className="outline-none border py-1 px-5 rounded-md md:w-full "
                         type="text"
                         value={searchText}
                         onChange={handleInputChange}
                         placeholder="Enter your search shoes."
                     />
                 </div>
-            </div>
             <div>
                 <ul className='flex gap-3 text-2xl'>
                     <li><FiHeart /></li>

@@ -1,24 +1,24 @@
-import { PayloadAction, createSlice } from '@reduxjs/toolkit';
-import { FilterPriceOptions } from '../enums/FilterPriceOptions';
-import { ICategories } from '../interfaces/ICategories';
-import { IColors } from '../interfaces/IColors';
-import { IPrices } from '../interfaces/IPrices';
-import { IProduct } from '../interfaces/IProduct';
-import { IFilterState } from '../interfaces/IFilterState';
-import { FilterType } from '../enums/FilterType';
-
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { FilterPriceOptions } from "../enums/FilterPriceOptions";
+import { ICategories } from "../interfaces/ICategories";
+import { IColors } from "../interfaces/IColors";
+import { IPrices } from "../interfaces/IPrices";
+import { IProduct } from "../interfaces/IProduct";
+import { IFilterState } from "../interfaces/IFilterState";
+import { FilterType } from "../enums/FilterType";
+import { SortOptions } from "../enums/SortOptions";
 
 const initialState: IFilterState = {
   products: [],
-  searchText: '',
+  searchText: "",
   filteredProducts: [],
   categories: [],
   colors: [],
-  prices: []
+  prices: [],
 };
 
 const filterSlice = createSlice({
-  name: 'filter',
+  name: "filter",
   initialState,
   reducers: {
     productsList: (state, action: PayloadAction<IProduct[]>) => {
@@ -27,7 +27,7 @@ const filterSlice = createSlice({
     },
     filteredProducts: (state, action: PayloadAction<string>) => {
       state.searchText = action.payload;
-      state.filteredProducts = state.products.filter(product =>
+      state.filteredProducts = state.products.filter((product) =>
         product.title.toLowerCase().startsWith(action.payload.toLowerCase())
       );
     },
@@ -38,27 +38,49 @@ const filterSlice = createSlice({
       state.colors = action.payload;
     },
     pricesList: (state, action: PayloadAction<IPrices[]>) => {
-      state.prices = action.payload
+      state.prices = action.payload;
     },
 
-    setChecked: (state, action: PayloadAction<{ type: FilterType; index: number }>) => {
+    sort: (state, action: PayloadAction<SortOptions>) => {
+      switch (action.payload) {
+        case SortOptions.LOW_TO_HIGH:
+          state.filteredProducts.sort((a, b) => a.newPrice - b.newPrice);
+          break;
+        case SortOptions.HIGH_TO_LOW:
+          state.filteredProducts.sort((a, b) => b.newPrice - a.newPrice);
+          break;
+        case SortOptions.A_TO_Z:
+          state.filteredProducts.sort((a, b) => a.title.localeCompare(b.title));
+          break;
+        case SortOptions.Z_TO_A:
+          state.filteredProducts.sort((a, b) => b.title.localeCompare(a.title));
+          break;
+        default:
+          break;
+      }
+    },
+
+    setChecked: (
+      state,
+      action: PayloadAction<{ type: FilterType; index: number }>
+    ) => {
       const { type, index } = action.payload;
 
-      const setColorChecked =()=>{
+      const setColorChecked = () => {
         state.colors[index].checked = !state.colors[index].checked;
-      }
+      };
 
-      const setCategoryChecked =()=>{
+      const setCategoryChecked = () => {
         state.categories[index].checked = !state.categories[index].checked;
-      }
+      };
 
-      const setPriceChecked =()=>{
-        state.prices.forEach((_,priceIndex)=>{
-          state.prices[priceIndex].checked = index==priceIndex;
+      const setPriceChecked = () => {
+        state.prices.forEach((_, priceIndex) => {
+          state.prices[priceIndex].checked = index == priceIndex;
         });
-      }
+      };
 
-      switch(type){
+      switch (type) {
         case FilterType.COLOR:
           setColorChecked();
           break;
@@ -74,15 +96,21 @@ const filterSlice = createSlice({
 
       const searchQuery = state.searchText.toLowerCase();
 
-      let filteredBySearch = state.products.filter(product =>
+      let filteredBySearch = state.products.filter((product) =>
         product.title.toLowerCase().includes(searchQuery)
       );
 
-      state.filteredProducts = filteredBySearch.filter(product => {
-        let selectedColors = state.colors.filter(color => color.checked);
-        let selectedCategories = state.categories.filter(category => category.checked);
-        let selectedPrice = state.prices.find(price => price.checked);
-        if (selectedColors.length===0 && selectedCategories.length===0 && selectedPrice?.range===FilterPriceOptions.ALL) {
+      state.filteredProducts = filteredBySearch.filter((product) => {
+        let selectedColors = state.colors.filter((color) => color.checked);
+        let selectedCategories = state.categories.filter(
+          (category) => category.checked
+        );
+        let selectedPrice = state.prices.find((price) => price.checked);
+        if (
+          selectedColors.length === 0 &&
+          selectedCategories.length === 0 &&
+          selectedPrice?.range === FilterPriceOptions.ALL
+        ) {
           return true;
         }
 
@@ -95,25 +123,39 @@ const filterSlice = createSlice({
         }
 
         let priceIsOk = false;
-        if(selectedPrice?.range===FilterPriceOptions.ALL){
-          priceIsOk=true;
-        }else if(selectedPrice?.range===FilterPriceOptions.LESS_THAN_50){
-          priceIsOk=product.newPrice<=50;
-        }else if(selectedPrice?.range===FilterPriceOptions.BETWEEN_50_AND_100){
-          priceIsOk=product.newPrice>=50 && product.newPrice<=100;
-        }else if(selectedPrice?.range===FilterPriceOptions.MORE_THAN_100){
-          priceIsOk=product.newPrice>=100;
+        if (selectedPrice?.range === FilterPriceOptions.ALL) {
+          priceIsOk = true;
+        } else if (selectedPrice?.range === FilterPriceOptions.LESS_THAN_50) {
+          priceIsOk = product.newPrice <= 50;
+        } else if (
+          selectedPrice?.range === FilterPriceOptions.BETWEEN_50_AND_100
+        ) {
+          priceIsOk = product.newPrice >= 50 && product.newPrice <= 100;
+        } else if (selectedPrice?.range === FilterPriceOptions.MORE_THAN_100) {
+          priceIsOk = product.newPrice >= 100;
         }
 
-        return priceIsOk && selectedColors.some(color => color.color === product.color) &&
-          selectedCategories.some(category => category.category === product.category);
+        return (
+          priceIsOk &&
+          selectedColors.some((color) => color.color === product.color) &&
+          selectedCategories.some(
+            (category) => category.category === product.category
+          )
+        );
       });
     },
   },
-
 });
 
 const filterReducer = filterSlice.reducer;
 
-export const { filteredProducts, productsList, categoriesList, colorsList, pricesList, setChecked } = filterSlice.actions;
+export const {
+  filteredProducts,
+  productsList,
+  categoriesList,
+  colorsList,
+  pricesList,
+  setChecked,
+  sort,
+} = filterSlice.actions;
 export default filterReducer;

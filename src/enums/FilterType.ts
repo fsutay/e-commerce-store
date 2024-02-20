@@ -1,5 +1,5 @@
-export enum FilterType{
-    COLOR,
-    CATEGORY,
-    PRICE
+export enum FilterType {
+  COLOR,
+  CATEGORY,
+  PRICE,
 }

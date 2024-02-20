@@ -4,10 +4,10 @@ import { IPrices } from "./IPrices";
 import { IProduct } from "./IProduct";
 
 export interface IFilterState {
-    products: IProduct[];
-    searchText: string;
-    filteredProducts: IProduct[];
-    categories: ICategories[]
-    colors: IColors[]
-    prices: IPrices[]
-  }
+  products: IProduct[];
+  searchText: string;
+  filteredProducts: IProduct[];
+  categories: ICategories[];
+  colors: IColors[];
+  prices: IPrices[];
+}

@@ -2,7 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import filterReducer from "./filter-slice";
 
 export const store = configureStore({
-  reducer: filterReducer
+  reducer: filterReducer,
 });
 
 export type AppDispatch = typeof store.dispatch;
